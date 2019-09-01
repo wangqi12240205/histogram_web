@@ -1,21 +1,292 @@
 <head>
-<!-- Plotly.js -->
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        </head>
-        <body>
-        <!-- Plotly chart will be drawn inside this DIV -->
-        <div id="myDiv"></div>
-        <script>
-        var x = [];
-for (var i = 0; i < 500; i ++) {
-    x[i] = Math.random();
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="json/measures2018.json"></script>
+    <script type="text/javascript" src="json/bigdomain2018.json"></script>
+    <script type="text/javascript" src="json/smalldomain2018.json"></script>
+    <script type="text/javascript" src="json/list_measure.json"></script>
+    <link   rel="stylesheet" type="text/css" href="css/dropdown.css"/> 
+</head>
+<body>
+    County FIPS: <input type="number" id="inputCountyFips" name="inputCountyFips" value = 1001 placeholder="County FIPS" min = 1000 max = 59999 >
+
+    <p id="outputFips" color = "red"></p>
+
+</br>
+Plot measure histogram<select name="selectDomain" id="selectDomain" onchange="changeSelectDomain();">
+    <option value="">Select Domain</option>
+</select></td>
+
+
+<select name="selectSubdomain" id="selectSubdomain" onchange = "changeSelectSubdomain()">
+    <option value="">Select Subdomain</option>
+</select></td>
+
+<select name="selectMeasure" id="selectMeasure" onclick= "changeSelectMeasure()">
+    <option value="">Select Measure</option>
+</select></td>
+</br>
+Plot aggregated magnitudes: <select name="selectCopewell" id="selectCopewell" onclick = "changeSelectCopewell()" >
+    <option value="">Select COPEWELL output</option>
+</select></td> 
+
+<select name="selectEvent" id="selectEvent" onclick = "changeSelectEvent()" value = "">
+    <option value="">Select Event Size</option>
+    <option value="Large event">Large event</option>
+    <option value="Small event">Small event</option>
+</select></td>
+
+<!-- Plotly chart will be drawn inside this DIV -->
+<div id="divNational"></div>
+
+<div id="divState"></div>
+
+<script>
+
+    selectDomain = document.getElementById('selectDomain');
+    var domains = []
+    var subdomains = {}
+    var measure_id = {}
+    var measure_des = {}
+            // console.log(list_measure[1])
+
+            for (var i in list_measure){
+                var measure = list_measure[i]
+                // console.log(measure)
+                key = measure.domain
+                if (!(domains.includes(measure.domain))) {
+                    domains.push(measure.domain)
+                    var opt = document.createElement('option');
+                    opt.value = measure.domain;
+                    opt.innerHTML = measure.domain;
+                    selectDomain.appendChild(opt);
+                    subdomains[key] = []
+
+                }
+                key_sub = measure.subdomain
+                if (!(subdomains[key].includes(measure.subdomain))) {
+                    subdomains[key].push(measure.subdomain)
+                    measure_id[key_sub] = []
+                    measure_des[key_sub] = []
+                }
+                
+
+                if (!(measure_id[key_sub].includes(measure.id))){
+                   measure_id[key_sub].push(measure.id)
+                   measure_des[key_sub].push(measure.description)
+               } 
+
+           }
+
+           var rowsIgnore = ["nameState", "nameCounty", "abState"];
+           var State_county_pairs = {};
+
+           for (var i in bigdomain2018) {
+            if (!rowsIgnore.includes(bigdomain2018[i].fips)) {
+                var newSelect = document.createElement('option');
+                selectHTML = "<option value='" + bigdomain2018[i].fips + "'>" + bigdomain2018[i].fips + "</option>";
+                newSelect.innerHTML = selectHTML;
+                document.getElementById('selectCopewell').add(newSelect);
+
+            }
+        }
+
+
+        // console.log(bigdomain2018)
+        // console.log(subdomains)
+        function changeSelectDomain() {
+            document.getElementById('selectCopewell').value = "";
+
+            var selectHTML = "";
+            var domain = document.getElementById("selectDomain").value;
+            var selectL = document.getElementById('selectSubdomain').options.length;
+            // console.log(selectL)
+            for (var i = 1; i < selectL; i++) {
+                document.getElementById('selectSubdomain').options.remove(1);
+
+            }
+            // console.log(document.getElementById('selectSubdomain').options)
+            subdomain = subdomains[domain]
+            for (var i = 0; i < subdomain.length; i++) {
+                var newSelect = document.createElement('option');
+                selectHTML = "<option value='" + subdomain[i] + "'>" + subdomain[i] + "</option>";
+                newSelect.innerHTML = selectHTML;
+                document.getElementById('selectSubdomain').add(newSelect);
+            }
+
+        }
+
+
+
+        function changeSelectSubdomain() {
+            document.getElementById('selectCopewell').value = "";
+
+            var selectHTML = "";
+            var subdomain = document.getElementById("selectSubdomain").value
+            var selectL = document.getElementById('selectMeasure').options.length;
+
+            for (var i = 1; i < selectL; i++) {
+                document.getElementById('selectMeasure').options.remove(1);
+
+            }
+            measure_name = measure_des[subdomain]
+            measure_index   = measure_id[subdomain]
+            // console.log(measure_index)
+            for (var i = 0; i < measure_name.length; i++) {
+                var newSelect = document.createElement('option');
+                selectHTML = "<option value='" + measure_index[i] + "'>" + measure_name[i] + "</option>";
+
+                newSelect.innerHTML = selectHTML;
+                newSelect.value =  measure_index[i];
+                document.getElementById('selectMeasure').add(newSelect);
+                    // console.log( newSelect)
+                }
+
+            }
+
+
+
+
+    // console.log(measures2018)
+        // console.log(measures2018)
+        function changeSelectMeasure(){
+            document.getElementById('selectCopewell').value = "";
+
+            measure_sel = document.getElementById('selectMeasure').value;
+            index = document.getElementById('selectMeasure').options.selectedIndex;
+            field_des = document.getElementById('selectMeasure').options[index].innerText;
+            fips = document.getElementById('inputCountyFips').value;
+
+            drawPlot(measures2018, measure_sel, fips, field_des);
+            // console.log(measure_des)
+
+        }
+
+        function drawPlot(plotData, fieldId, fips, field_des) {
+            console.log(field_des)
+        // console.log(fieldId)
+        var countyValue;
+        var plotNational = [];
+        var plotState = [];
+        stateId =  Math.floor(parseInt(fips, 10) / 1000);
+        for (var i in plotData) {
+            if (fieldId == plotData[i].fips) {
+
+                for(var j in plotData[i]) {
+                    if (j != "fips" && plotData[i][j] != "") {
+                        plotNational.push(parseFloat(plotData[i][j]));  
+                        if (Math.floor(parseInt(j, 10) / 1000) == stateId)
+                            plotState.push(parseFloat(plotData[i][j]));  
+                    }
+                    if (j == fips) {
+                        countyValue = plotData[i][j];
+                    }
+                }
+            }
+        }
+
+        if (countyValue == undefined) {
+            document.getElementById("outputFips").innerHTML = "Not a valid fips";
+            document.getElementById("outputFips").style.color = "#ff0000";  
+
+        } else if (countyValue == "") {
+            document.getElementById("outputFips").innerHTML = "No data for this county";
+            document.getElementById("outputFips").style.color = "#ff0000";
+        } else {
+            document.getElementById("outputFips").innerHTML = "";
+        }
+        // console.log(stateId)
+
+        var traceNational = {
+            x: plotNational,
+            type: 'histogram',
+            name: 'National histogram'
+        };
+        var layout_nation = {title: "National distribution: " + field_des};
+        var dataNational = [traceNational];
+        Plotly.newPlot('divNational',dataNational , layout_nation, {showSendToCloud: true});
+        // console.log(plotState)
+        var traceState = {
+            x: plotState,
+            type: 'histogram',
+            name: 'State histogram',
+            // xbins: {
+            //     end: 1, 
+            //     size: 0.015, 
+            //     start: 0
+            // }
+
+        };
+        var dataState = [traceState];
+        var layout_state = {title: "State distribution: " + field_des};
+
+        if (countyValue != undefined) {
+            document.getElementById("divState").hidden = false;
+            Plotly.newPlot('divState',dataState , layout_state, {showSendToCloud: true});
+        }
+        else  document.getElementById("divState").hidden = true;
+        if (countyValue != undefined && countyValue != ""){plotCountyLine(countyValue,fips,countyValue);}
+    }
+
+    function plotCountyLine(countyValue,fips) {
+            var state_name;
+            var county_name;
+            state_name = bigdomain2018[2][fips];
+            county_name = bigdomain2018[1][fips];
+            legend_name = county_name + ", " + state_name;
+        // console.log(legend_name)
+        var refplot = document.getElementById('divNational');
+        var traceCountyNational = {
+          x: [parseFloat(countyValue), parseFloat(countyValue)],
+          y: refplot.layout.yaxis.range,
+          type: 'scatter',
+          name: legend_name
+      };
+      Plotly.addTraces('divNational',traceCountyNational); 
+
+      var refplot2 = document.getElementById('divState');
+      var traceCountyState = {
+          x: [parseFloat(countyValue), parseFloat(countyValue)],
+          y: refplot2.layout.yaxis.range,
+          type: 'scatter',
+          name: legend_name
+      };
+      Plotly.addTraces('divState',traceCountyState);    
+  }
+
+
+  function changeSelectCopewell(){
+    copewellOutput = document.getElementById('selectCopewell').value;
+    if (["Community Functioning", "Preparedness and Response", "Internal Resources", "Prevention Mitigation", "Population Vulnerability Inequality Deprivation", "Social Cohesion"].includes(copewellOutput))
+        changeSelectEvent();
+    else
+        document.getElementById('selectEvent').hidden = false;
 }
 
-var trace = {
-    x: x,
-    type: 'histogram',
-  };
-var data = [trace];
-Plotly.newPlot('myDiv', data, {}, {showSendToCloud: true});
-        </script>
-        </body>
+function changeSelectEvent(){
+    document.getElementById('selectDomain').value = "";
+    document.getElementById('selectSubdomain').value = "";
+    document.getElementById('selectMeasure').value = "";
+    event = document.getElementById('selectEvent').value;
+    document.getElementById('selectEvent').hidden = false;
+
+    copewellOutput = document.getElementById('selectCopewell').value;
+    fips = document.getElementById('inputCountyFips').value;
+    var plotNational = [];
+    var domain2018;
+    if (event == "Large event")
+        domain2018 = bigdomain2018;
+    else if (event == "Small event")
+        domain2018 = smalldomain2018;
+    if (["Community Functioning", "Preparedness and Response", "Internal Resources", "Prevention Mitigation", "Population Vulnerability Inequality Deprivation", "Social Cohesion"].includes(copewellOutput)) {
+        document.getElementById('selectEvent').value = "";
+        document.getElementById('selectEvent').hidden = true;
+        domain2018 = bigdomain2018;
+    }
+
+    drawPlot(domain2018, copewellOutput, fips,copewellOutput);
+}
+
+
+</script>
+</body>

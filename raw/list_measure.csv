@@ -1,0 +1,44 @@
+id,description,domain,subdomain,direction
+1,% of population with a telephone ,Community Functioning,Communication,+
+3,% of households with Internet service,Community Functioning,Communication,+
+4,Civilians over 16 in labor force per 10k population,Community Functioning,Economy,+
+5,Number of business establishments per 10k population,Community Functioning,Economy,+
+6,Number of banking companies per 10k population,Community Functioning,Economy,+
+7,Median household income,Community Functioning,Economy,+
+8,Number of employers per 10k population ,Community Functioning,Economy,+
+10,Number of colleges universities and professional schools per 10k population,Community Functioning,Education,+
+11,Pupil/teacher ratio (public schools),Community Functioning,Education,-
+12,Food Environment Index ,Community Functioning,Food and Water,+
+140,% of housing units lacking complete plumbing facilities,Community Functioning,Food and Water,-
+144,County infrastructure expenditures per 10k population,Community Functioning,Government,+
+145,Justice & Public Safety Expenditures per 10k population,Community Functioning,Government,+
+18,Number of hospital beds per 10k population,Community Functioning,Healthcare Delivery and Public Health Services,+
+20,% of population with health insurance,Community Functioning,Healthcare Delivery and Public Health Services,+
+146,PHAB accredidation,Community Functioning,Healthcare Delivery and Public Health Services,+
+147,Population employed in health care support per 10k population,Community Functioning,Healthcare Delivery and Public Health Services,+
+22,% of occupied housing units/households with over 1 person/room,Community Functioning,Housing,-
+24,% of housing with severe problems,Community Functioning,Housing,-
+141,% of households spending over 30% of income on housing,Community Functioning,Housing,-
+26,Number of nursing homes per 10k population,Community Functioning,Nurturing and Care,+
+201,% of 3-4 year-old children enrolled in public pre-kindergarten school,Community Functioning,Nurturing and Care,+
+27,Number of recreational centers and sport organizations per 10k population,Community Functioning,Population Well being,+
+176,"Number of Arts, entertainment and recreation establishments per 10k population",Community Functioning,Population Well being,+
+177,% of population living within a half mile of a park,Community Functioning,Population Well being,+
+142,% of employed workers taking public transportation to work,Community Functioning,Transportation,+
+157,Flu vaccination claims rates by geographic area (trends in flu vaccination rates among Medicare beneficiaries),Prevention Mitigation,Countermeasures,+
+158,Number of pharmacies enrolled in the Emergency Prescription Assistance Program (EPAP) ,Prevention Mitigation,Countermeasures,+
+159,Average age of housing stock (years),Prevention Mitigation,Engineered Systems,-
+161,% of bridges with structural deficiencies,Prevention Mitigation,Engineered Systems,-
+149,Mitigation: % of population covered by a recent hazard mitigation plan (positive effect),Preparedness and Response,Preparedness,+
+155,Number of first responders per 10k population,Preparedness and Response,Preparedness,+
+171,% of population living in poverty,Population Vulnerability Inequality Deprivation ,Deprivation,-
+166,Gini Index of Income Inequality,Population Vulnerability Inequality Deprivation ,Inequality,-
+167,% of population under 5 years or age 65 and over,Population Vulnerability Inequality Deprivation ,Vulnerability,-
+170,"% of population with sensory, physical, or mental disability",Population Vulnerability Inequality Deprivation ,Vulnerability,-
+162,"Number of highway, street, and bridge construction establishments per 10k population",Internal Resources,Resources for recovery,+
+163,Number of architecture and engineering establishments per 10k population,Internal Resources,Resources for recovery,+
+164,Number of building construction establishments per 10k population,Internal Resources,Resources for recovery,+
+165,Number of utility systems construction establishments per 10k population,Internal Resources,Resources for recovery,+
+172,Civic involvement: number of civic organizations per 10k population,Social Cohesion,Social Cohesion,+
+173,% County Level Vote Data (US President General) 2016 President,Social Cohesion,Social Cohesion,+
+174,Number of social advocacy organizations per 10k population,Social Cohesion,Social Cohesion,+
