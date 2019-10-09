@@ -3,7 +3,7 @@ import json
 import os
 import pandas as pd
 
- 
+ # transfter data inyo json
 raw_path = 'raw'
 data_path = 'data'
 output_path = 'json'
